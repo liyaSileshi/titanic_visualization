@@ -1,54 +1,70 @@
-const chart = new Chartist.Line(".ct-chart", {});
+const chart = new Chartist.Bar('.ct-chart',{});
+
 
 const lines = ["a", "b", "c"];
 
-// Grab all the columns
-const columnList = document.querySelector(".control-column ul");
-const columns = columnList.children;
-
-for (let i = 0, length = columns.length; i < length; i += 1) {
-  columns[i].children[0].addEventListener("input", function() {
-    updateLines(columns);
-  });
-}
-
-// Update the lists to be checked
-columnList.addEventListener("click", e => {
-  if (e.target.tagName === "LI") {
-    e.target.classList.toggle("checked");
-  }
-});
-
 // Get the initial chart data
 function getChartData(queryString = "?n=30&n=50") {
+  console.log('here')
   axios
     .get("/titanic" + queryString)
     .then(res => {
-      let timeSeries = res.data;
-
+      let titanic = res.data;
+      // console.log(titanic)
       const seriesData = [];
-      const series = ["diet", "gym", "finance"];
-      for (let i = 0, length = series.length; i < length; i += 1) {
-        const currSeries = series[i];
+      // const series = ["diet", "gym", "finance"];
+      const series = ["Age"];
 
-        // Check if the current series exist
-        if (typeof timeSeries[currSeries] !== "undefined") {
-          const data = Object.values(timeSeries[currSeries]);
-          seriesData.push(data);
-        }
+      // for (let i = 0, length = series.length; i < length; i += 1) {
+      const currSeries = series[0];
+
+      // have male and female counts
+      let male = 0
+      let female = 0
+
+    const age = titanic["Age"]
+    const sex = titanic["Sex"]
+    let ageArray = []
+    let sexArray = []
+
+    for (let key of Object.keys(age)) {
+      // add all ages into ageArray
+      ageArray.push(age[key])
+      // console.log(key + " -> " + age[key])
+    }
+
+    for (let key of Object.keys(sex)) {
+      // add all sex into sexArray
+      sexArray.push(sex[key])
+    }
+    console.log(ageArray)
+    console.log(sexArray)
+
+    for (let i=0; i<ageArray.length; i+=1) {
+      if (sexArray[i] == "female") {
+        female += 1
+      } else {
+        male += 1
       }
+    }
+    
+
+    console.log(female)
+    console.log(male)
 
       const chartData = {
-        labels: Object.values(timeSeries.month).map(utc => {
-          const date = new Date(0);
-          date.setUTCMilliseconds(Number(utc));
-          return `${date.getFullYear()}-${date.getMonth()}`;
-        }),
-        series: seriesData
+        labels: ["Female", "Male"],
+        series: [[female, male]]
       };
-      chart.update(chartData);
 
-      updateLines(columnList.children);
+      // let options = {
+      //   high: 10,
+      //   low: -10
+      // };
+
+      chart.update(chartData);
+      
+      // updateLines(columnList.children);
     })
     .catch(err => console.error(err));
 }
@@ -56,7 +72,7 @@ function getChartData(queryString = "?n=30&n=50") {
 // Updating the chart data
 function updateChart() {
   let queryString;
-  const items = columnList.children;
+  // const items = columnList.children;
 
   // Get both input fields from the time frame section
   const timeFrames = document.querySelectorAll(".control-date > input");
@@ -73,13 +89,6 @@ function updateChart() {
     }
   }
 
-  let currLine = 0;
-  // Grab all the checked columns
-  for (let i = 0, length = items.length; i < length; i += 1) {
-    if (items[i].classList.contains("checked")) {
-      queryString += "&m=" + items[i].innerText.toLowerCase();
-    }
-  }
 
   getChartData(queryString);
 }
