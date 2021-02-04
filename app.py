@@ -28,30 +28,21 @@ def get_time_series_data():
         Return the necessary data to create a the titanic viz
     """
     # Grab the requested years and columns from the query arguments
-    ls_year = [int(year) for year in request.args.getlist("n")]
-    # ls_col = request.args.getlist("m")
+    ls_age = [int(age) for age in request.args.getlist("n")]
 
-    # Generate a list of all the months we need to get
-    all_years = [str(year) for year in range(min(ls_year), max(ls_year) + 1)]
+    # Generate a list of all the ages we need to get
+    all_ages = [str(age) for age in range(min(ls_age), max(ls_age) + 1)]
 
     # Grab all of the wanted months by filtering for the ones we want
     wanted_ages = reduce(
-        lambda a, b: a | b, (app.df["Age"].astype(str).str.contains(year) for year in all_years)
+        lambda a, b: a | b, (app.df["Age"].astype(str).str.contains(age) for age in all_ages)
     )
     print(wanted_ages)
-    # Create a new dataframe from the one that
+
+    # Create a new dataframe that has only the age interval provided
     df_new = app.df[wanted_ages][["Age"] + ["Survived", "Sex"]]
 
-    # sort the values by age
-    # df_new = df_new.sort_values(by=["Age"])
-
     return  df_new.to_json(), 200
-
-    # Convert all string dates into datetime objects and then sort them
-    # df_new["month"] = pd.to_datetime(df_new["month"])
-
-    # return all_years
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=3000)

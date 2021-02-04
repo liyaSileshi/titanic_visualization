@@ -36,7 +36,7 @@ body {
   margin-right: 0;
 }
 
-.control-date {
+.control-age {
   display:flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -52,7 +52,7 @@ body {
   text-align: center;
 }
 
-.control-date > .underlined-input {
+.control-age > .underlined-input {
   padding-left: 15px;
 }
 
@@ -88,7 +88,7 @@ body {
   border-color: #fff;
   border-style: solid;
   border-width: 0 2px 2px 0;
-  top 10px;
+  top: 10px;
   left: 16px;
   transform: rotate(45deg);
   height: 15px;
@@ -118,4 +118,10 @@ body {
 
 .control-button > input:active {
   background: #888;
+}
+
+/* bar graph style */
+.ct-series-a > .ct-bar {
+  /* The width of your bars */
+  stroke-width: 50px;
 }
